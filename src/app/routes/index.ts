@@ -1,12 +1,13 @@
 import express from "express";
 import { CategoryRoutes } from "../modules/category/category.route";
+import { CourseRoutes } from "../modules/course/course.route";
 
 const router = express.Router();
 
 const moduleRoutes = [
   {
     path: "/courses",
-    route: CategoryRoutes,
+    route: CourseRoutes,
   },
   {
     path: "/categories",
