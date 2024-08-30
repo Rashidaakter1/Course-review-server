@@ -22,13 +22,14 @@ const getCourse = catchAsync(async (req: Request, res: Response) => {
   sendRequest(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Categories retrieved successfully",
+    message: "Courses retrieved successfully",
     data: result,
   });
 });
 
 const getSingleCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await CourseServices.createCourseIntoDb(req.body);
+  const courseId = req.params.courseId;
+  const result = await CourseServices.getSingleCourseFromDb(courseId, req.body);
 
   sendRequest(res, {
     success: true,
@@ -41,4 +42,5 @@ const getSingleCourse = catchAsync(async (req: Request, res: Response) => {
 export const CourseControllers = {
   createCourse,
   getCourse,
+  getSingleCourse,
 };
