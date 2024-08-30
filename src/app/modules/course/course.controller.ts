@@ -65,10 +65,37 @@ const deleteSingleCourse = catchAsync(async (req: Request, res: Response) => {
   });
 });
 
+const getAllReviewsWithCourse = catchAsync(
+  async (req: Request, res: Response) => {
+    const courseId = req.params.courseId;
+    const result = await CourseServices.getAllReviewsWithCourseFromDb(courseId);
+
+    sendRequest(res, {
+      success: true,
+      statusCode: httpStatus.OK,
+      message: "Course and Reviews retrieved successfully!",
+      data: result,
+    });
+  }
+);
+const getBestCourse = catchAsync(async (req: Request, res: Response) => {
+ 
+  const result = await CourseServices.getBestReviewsWithCourseFromDb();
+
+  sendRequest(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Best course retrieved successfully!",
+    data: result,
+  });
+});
+
 export const CourseControllers = {
   createCourse,
   getCourse,
   getSingleCourse,
   updateSingleCourse,
   deleteSingleCourse,
+  getAllReviewsWithCourse,
+  getBestCourse,
 };

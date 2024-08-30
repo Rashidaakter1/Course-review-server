@@ -1,7 +1,6 @@
 import { model, Schema } from "mongoose";
 import { TCourse, TDetails, TTags } from "./course.interface";
 
-
 const detailsSchema = new Schema<TDetails>({
   level: { type: String, required: true },
   description: { type: String, required: true },
@@ -16,9 +15,9 @@ const courseSchema = new Schema<TCourse>(
     tags: [
       {
         name: { type: String, required: true },
-        isDeleted: { type: String, default: false },
+        isDeleted: { type: Boolean, default: false },
+        _id: false,
       },
-      { _id: false },
     ],
     startDate: { type: String, required: true },
     endDate: { type: String, required: true },

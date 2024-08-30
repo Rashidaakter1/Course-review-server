@@ -13,6 +13,9 @@ router.post(
 router.get("/", CourseControllers.getCourse);
 router.get("/:courseId", CourseControllers.getSingleCourse);
 router.put("/:courseId", CourseControllers.updateSingleCourse);
+router.get("/:courseId/reviews", CourseControllers.getAllReviewsWithCourse);
+
+router.get("/best", CourseControllers.getBestCourse);
 router.delete("/:courseId", CourseControllers.deleteSingleCourse);
 
 export const CourseRoutes = router;
