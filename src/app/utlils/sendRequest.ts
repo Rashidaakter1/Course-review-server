@@ -2,7 +2,7 @@ import { Response } from "express";
 
 type TGenericResponse<T> = {
   success: boolean;
-  statusCode: number;
+  statusCode: number ;
   message: string;
   data: T;
 };

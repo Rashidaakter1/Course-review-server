@@ -50,7 +50,8 @@ const createCourseValidation = z.object({
     }),
     durationInWeeks: z
       .number()
-      .positive({ message: "Duration in weeks must be a positive number" }),
+      .positive({ message: "Duration in weeks must be a positive number" })
+      .optional(),
     details: detailsValidation,
   }),
 });

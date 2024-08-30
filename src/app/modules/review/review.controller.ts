@@ -4,13 +4,12 @@ import sendRequest from "../../utlils/sendRequest";
 import httpStatus from "http-status";
 import { ReviewsServices } from "./review.service";
 
-
 const createReviews = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewsServices.createReviewsIntoDb(req.body);
 
   sendRequest(res, {
     success: true,
-    statusCode: httpStatus.OK,
+    statusCode: 201,
     message: "Reviews created successfully!",
     data: result,
   });
@@ -22,18 +21,22 @@ const getReviews = catchAsync(async (req: Request, res: Response) => {
   sendRequest(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Categories retrieved successfully",
+    message: "Reviews are retrieved successfully",
     data: result,
   });
 });
 
 const getSingleReviews = catchAsync(async (req: Request, res: Response) => {
-  const result = await ReviewsServices.createReviewsIntoDb(req.body);
+  const reviewId = req.params.reviewId;
+  const result = await ReviewsServices.getSingleReviewsFromDb(
+    reviewId,
+    req.body
+  );
 
   sendRequest(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Reviews created successfully!",
+    message: "Review  is retrieved  successfully!",
     data: result,
   });
 });
@@ -41,4 +44,5 @@ const getSingleReviews = catchAsync(async (req: Request, res: Response) => {
 export const ReviewsControllers = {
   createReviews,
   getReviews,
+  getSingleReviews,
 };

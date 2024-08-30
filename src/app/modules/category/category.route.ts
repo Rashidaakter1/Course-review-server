@@ -11,5 +11,8 @@ router.post(
   CategoryControllers.createCategory
 );
 router.get("/", CategoryControllers.getCategory);
+router.get("/:categoryId", CategoryControllers.getSingleCategory);
+router.put("/:categoryId", CategoryControllers.updateSingleCategory);
+router.delete("/:categoryId", CategoryControllers.deleteSingleCategory);
 
 export const CategoryRoutes = router;
