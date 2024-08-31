@@ -1,5 +1,5 @@
 import { model, Schema } from "mongoose";
-import { TCourse, TDetails, TTags } from "./course.interface";
+import { TCourse, TDetails } from "./course.interface";
 
 const detailsSchema = new Schema<TDetails>({
   level: { type: String, required: true },
@@ -25,10 +25,16 @@ const courseSchema = new Schema<TCourse>(
     provider: { type: String, required: true },
     durationInWeeks: { type: Number },
     details: detailsSchema,
+    isDeleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,
   }
 );
+
+courseSchema.pre("find", async function (next) {
+  this.where({ isDeleted: { $ne: true } });
+  next();
+});
 
 export const Course = model<TCourse>("Course", courseSchema);

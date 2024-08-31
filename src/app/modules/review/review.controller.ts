@@ -40,9 +40,34 @@ const getSingleReviews = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+const updateSingleReviews = catchAsync(async (req: Request, res: Response) => {
+  const reviewId = req.params.reviewId;
+  console.log(req.body);
+  const result = await ReviewsServices.updateReviewsFromDb(reviewId, req.body);
+
+  sendRequest(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Review  is updated  successfully!",
+    data: result,
+  });
+});
+const deleteSingleReviews = catchAsync(async (req: Request, res: Response) => {
+  const reviewId = req.params.reviewId;
+  const result = await ReviewsServices.deleteReviewsFromDb(reviewId, req.body);
+
+  sendRequest(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Review  is deleted  successfully!",
+    data: result,
+  });
+});
 
 export const ReviewsControllers = {
   createReviews,
   getReviews,
   getSingleReviews,
+  updateSingleReviews,
+  deleteSingleReviews,
 };

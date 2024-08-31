@@ -9,10 +9,16 @@ const ReviewsSchema = new Schema<TReviews>(
     },
     rating: { type: Number, required: true },
     review: { type: String, required: true },
+    isDeleted: { type: Boolean, default: false },
   },
   {
     timestamps: true,
   }
 );
+
+ReviewsSchema.pre("find", async function (next) {
+  this.where({ isDeleted: { $ne: true } });
+  next();
+});
 
 export const Reviews = model<TReviews>("Reviews", ReviewsSchema);

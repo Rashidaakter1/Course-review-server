@@ -53,6 +53,7 @@ const createCourseValidation = z.object({
       .positive({ message: "Duration in weeks must be a positive number" })
       .optional(),
     details: detailsValidation,
+    isDeleted: z.boolean().optional().default(false),
   }),
 });
 
@@ -123,6 +124,7 @@ const updateCourseValidation = z.object({
       .positive({ message: "Duration in weeks must be a positive number" })
       .optional(),
     details: updateDetailsValidation,
+    isDeleted: z.boolean().optional().default(false),
   }),
 });
 

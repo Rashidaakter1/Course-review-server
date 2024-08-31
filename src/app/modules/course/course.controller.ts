@@ -46,7 +46,7 @@ const getSingleCourse = catchAsync(async (req: Request, res: Response) => {
   sendRequest(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "Course created successfully!",
+    message: "Course is retrieved successfully!",
     data: result,
   });
 });

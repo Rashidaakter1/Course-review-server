@@ -7,6 +7,11 @@ const categorySchema = new Schema<TCategory>({
     required: true,
     unique: true,
   },
+  isDeleted: { type: Boolean, default: false },
 });
 
+categorySchema.pre("find", async function (next) {
+  this.where({ isDeleted: { $ne: true } });
+  next();
+});
 export const Category = model<TCategory>("Category", categorySchema);

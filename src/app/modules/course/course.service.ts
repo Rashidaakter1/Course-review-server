@@ -17,7 +17,10 @@ const createCourseIntoDb = async (payload: TCourse) => {
 };
 const getCourseFromDb = async (query: Record<string, unknown>) => {
   console.log(query);
-  const queryCourse = new QueryBuilder(Course.find(), query)
+  const queryCourse = new QueryBuilder(
+    Course.find().select("-isDeleted"),
+    query
+  )
     .search(searchableArray)
     .filter()
     .sort()
@@ -28,7 +31,7 @@ const getCourseFromDb = async (query: Record<string, unknown>) => {
   return filteredCourse;
 };
 const getSingleCourseFromDb = async (id: string) => {
-  const course = await Course.findById(id);
+  const course = await Course.findById(id).where({ isDeleted: { $ne: true } });
   return course;
 };
 const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
@@ -134,8 +137,11 @@ const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
   }
 };
 
-const deleteCourseFromDb = async (id: string, payload: TCourse) => {
-  const course = await Course.findByIdAndUpdate(id, payload, { new: true });
+const deleteCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
+  console.log(payload);
+  const course = await Course.findByIdAndUpdate(id, payload, {
+    $set: { isDeleted: true },
+  });
   return course;
 };
 
