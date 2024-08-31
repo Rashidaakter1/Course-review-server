@@ -2,8 +2,13 @@ import { Response } from "express";
 
 type TGenericResponse<T> = {
   success: boolean;
-  statusCode: number ;
+  statusCode: number;
   message: string;
+  meta?: {
+    page: number;
+    limit: number;
+    total: number;
+  };
   data: T;
 };
 
@@ -12,6 +17,7 @@ const sendRequest = <T>(res: Response, result: TGenericResponse<T>) => {
     success: result.success,
     statusCode: result.statusCode,
     message: result.message,
+    meta: result.meta,
     data: result.data,
   });
 };

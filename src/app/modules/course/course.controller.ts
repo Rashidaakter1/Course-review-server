@@ -4,6 +4,7 @@ import catchAsync from "../../utlils/catchAsync";
 import sendRequest from "../../utlils/sendRequest";
 import httpStatus from "http-status";
 import { CourseServices } from "./course.service";
+import { Course } from "./course.model";
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
   const result = await CourseServices.createCourseIntoDb(req.body);
@@ -18,13 +19,22 @@ const createCourse = catchAsync(async (req: Request, res: Response) => {
 
 const getCourse = catchAsync(async (req: Request, res: Response) => {
   const query = req.query;
-  console.log(query);
+
+  let queryPage = query.page ? Number(query.page) : 1;
+  let queryLimit = query.limit ? Number(query.limit) : 10;
+  const total = await Course.countDocuments({});
+  const meta = {
+    page: queryPage,
+    limit: queryLimit,
+    total: total,
+  };
   const result = await CourseServices.getCourseFromDb(query);
 
   sendRequest(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Courses retrieved successfully",
+    meta: meta,
     data: result,
   });
 });
@@ -79,7 +89,6 @@ const getAllReviewsWithCourse = catchAsync(
   }
 );
 const getBestCourse = catchAsync(async (req: Request, res: Response) => {
- 
   const result = await CourseServices.getBestReviewsWithCourseFromDb();
 
   sendRequest(res, {

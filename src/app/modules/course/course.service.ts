@@ -16,6 +16,7 @@ const createCourseIntoDb = async (payload: TCourse) => {
   return course;
 };
 const getCourseFromDb = async (query: Record<string, unknown>) => {
+  console.log(query);
   const queryCourse = new QueryBuilder(Course.find(), query)
     .search(searchableArray)
     .filter()
@@ -157,6 +158,7 @@ const getAllReviewsWithCourseFromDb = async (id: string) => {
 
   return allReviewWithCourse;
 };
+
 const getBestReviewsWithCourseFromDb = async () => {
   const bestReviewedCourse = await Reviews.aggregate([
     {
@@ -164,6 +166,7 @@ const getBestReviewsWithCourseFromDb = async () => {
       $group: {
         _id: "$courseId",
         averageRating: { $avg: "$rating" },
+        reviewCount: { $count: {} },
       },
     },
     {
@@ -172,11 +175,19 @@ const getBestReviewsWithCourseFromDb = async () => {
     },
     {
       // Limit to top 10 best reviewed courses (or change the limit as needed)
-      $limit: 10,
+      $limit: 1,
     },
   ]);
 
-  console.log(bestReviewedCourse);
+  const courseData = await Course.findById(bestReviewedCourse[0]._id);
+
+  const data = {
+    course: courseData,
+    averageRating: bestReviewedCourse[0].averageRating,
+    reviewCount: bestReviewedCourse[0].reviewCount,
+  };
+  console.log(data);
+  return data;
 };
 
 export const CourseServices = {
