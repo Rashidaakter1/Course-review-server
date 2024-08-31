@@ -16,7 +16,7 @@ const createReviews = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getReviews = catchAsync(async (req: Request, res: Response) => {
-  const result = await ReviewsServices.getReviewsFromDb();
+  const result = await ReviewsServices.getReviewsFromDb(req.query);
 
   sendRequest(res, {
     success: true,

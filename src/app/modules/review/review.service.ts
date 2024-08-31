@@ -1,3 +1,5 @@
+import QueryBuilder from "../../builder/QueryBuilder";
+import { searchableReviewArray } from "./review.constant";
 import { TReviews } from "./review.interface";
 import { Reviews } from "./review.model";
 
@@ -5,9 +7,18 @@ const createReviewsIntoDb = async (payload: TReviews) => {
   const reviews = await Reviews.create(payload);
   return reviews;
 };
-const getReviewsFromDb = async () => {
-  const reviews = await Reviews.find().select("-isDeleted");
-  return reviews;
+const getReviewsFromDb = async (query: Record<string, unknown>) => {
+  const queryReview = new QueryBuilder(
+    Reviews.find().select("-isDeleted"),
+    query
+  )
+    .search(searchableReviewArray)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+  const result = await queryReview.modelQuery;
+  return result;
 };
 const getSingleReviewsFromDb = async (id: string, payload: TReviews) => {
   const reviews = await Reviews.findById(id)

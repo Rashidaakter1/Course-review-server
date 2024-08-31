@@ -16,7 +16,7 @@ const createCourseIntoDb = async (payload: TCourse) => {
   return course;
 };
 const getCourseFromDb = async (query: Record<string, unknown>) => {
-  console.log(query);
+
   const queryCourse = new QueryBuilder(
     Course.find().select("-isDeleted"),
     query
@@ -147,7 +147,7 @@ const deleteCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
 
 const getAllReviewsWithCourseFromDb = async (id: string) => {
   // Fetch the course details
-  const course = await Course.findById(id);
+  const course = await Course.findById(id).where({ isDeleted: { $ne: true } });
   console.log(course);
   if (!course) {
     throw new AppError("Course not found", httpStatus.NOT_FOUND);
