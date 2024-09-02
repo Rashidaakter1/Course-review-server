@@ -8,6 +8,7 @@ Develop a Node.js Express application using TypeScript as the programming langua
 ## Link 
 
 [Course-review-server](https://course-review-server-o92qcqcco.vercel.app/)
+[Testing video with Postman](https://www.youtube.com/watch?v=ZJdK9FxVXXo)
 
 
 ## Tech Stack

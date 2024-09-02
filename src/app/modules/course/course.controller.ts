@@ -22,7 +22,7 @@ const getCourse = catchAsync(async (req: Request, res: Response) => {
 
   let queryPage = query.page ? Number(query.page) : 1;
   let queryLimit = query.limit ? Number(query.limit) : 10;
-  const total = await Course.countDocuments({});
+  const total = await Course.countDocuments({ isDeleted: false });
   const meta = {
     page: queryPage,
     limit: queryLimit,
