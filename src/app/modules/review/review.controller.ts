@@ -54,7 +54,7 @@ const updateSingleReviews = catchAsync(async (req: Request, res: Response) => {
 });
 const deleteSingleReviews = catchAsync(async (req: Request, res: Response) => {
   const reviewId = req.params.reviewId;
-  const result = await ReviewsServices.deleteReviewsFromDb(reviewId, req.body);
+  const result = await ReviewsServices.deleteReviewsFromDb(reviewId);
 
   sendRequest(res, {
     success: true,

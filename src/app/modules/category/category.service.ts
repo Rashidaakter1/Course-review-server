@@ -32,13 +32,17 @@ const updateCategoryFromDb = async (
   const category = await Category.findByIdAndUpdate(id, payload, { new: true });
   return category;
 };
+
 const deleteCategoryFromDb = async (
   id: string,
-  payload: Partial<TCategory>
 ) => {
-  const category = await Category.findByIdAndUpdate(id, payload, {
-    $set: { isDeleted: true },
-  });
+  const category = await Category.findByIdAndUpdate(
+    id,
+    {
+      $set: { isDeleted: true },
+    },
+    { new: true }
+  );
   return category;
 };
 

@@ -17,14 +17,14 @@ class QueryBuilder<T> {
     this.query = query;
   }
 
-  search(searchableArray: string[]) {
-    const sortBy = this.query.sortBy || "";
-    if (sortBy) {
+  search(searchableFields: string[]) {
+    const searchTerm = this.query.sortBy || ""; // Assuming 'sortBy' is the search term here
+    if (searchTerm) {
       this.modelQuery = this.modelQuery.find({
-        $or: searchableArray.map(
+        $or: searchableFields.map(
           (field) =>
             ({
-              [field]: { $regex: sortBy, $options: "i" },
+              [field]: { $regex: searchTerm, $options: "i" }, // Case-insensitive regex search
             } as FilterQuery<T>)
         ),
       });

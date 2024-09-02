@@ -33,10 +33,14 @@ const updateReviewsFromDb = async (id: string, payload: Partial<TReviews>) => {
   });
   return reviews;
 };
-const deleteReviewsFromDb = async (id: string, payload: Partial<TReviews>) => {
-  const reviews = await Reviews.findByIdAndUpdate(id, payload, {
-    $set: { isDeleted: true },
-  });
+const deleteReviewsFromDb = async (id: string) => {
+  const reviews = await Reviews.findByIdAndUpdate(
+    id,
+    {
+      $set: { isDeleted: true },
+    },
+    { new: true }
+  );
   return reviews;
 };
 
