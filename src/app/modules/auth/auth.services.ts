@@ -1,11 +1,17 @@
 import httpStatus from "http-status";
 import config from "../../config";
 import AppError from "../../errors/AppError";
-import { User } from "../user/user.model";
-import { TLoginUser } from "./auth.interface";
+import { TLoginUser, TUser } from "./auth.interface";
 import bcrypt from "bcrypt";
 import createToken from "./auth.utils";
 import { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { User } from "./auth.model";
+
+const createUserIntoDB = async (payload: TUser) => {
+  const result = await User.create(payload);
+  return result;
+};
 const loginUser = async (payload: TLoginUser) => {
   //check if the user is already in the database
   const isUserExist = await User.findOne({ username: payload?.username });
@@ -88,37 +94,26 @@ const changePasswordIntoDb = async (
 
   return result;
 };
-const refreshTokenIntoDB = async (
-  user: JwtPayload,
-  payload: {
-    currentPassword: string;
-    newPassword: string;
-  }
-) => {
-  const { _id } = user;
+const refreshTokenIntoDB = async (token: string) => {
+  const decoded = jwt.verify(token, config.jwt__refresh__token as string);
 
-  const isUser = await User.findById(_id);
-  const hashedPassword = isUser?.password as string;
-  const isPasswordMatched = await bcrypt.compare(
-    payload?.currentPassword,
-    hashedPassword
-  );
-  if (!isPasswordMatched) {
-    throw new AppError(httpStatus.NOT_FOUND, "Users Password do not found");
-  }
+  console.log(decoded ,"refresh");
+  const { _id, role, email } = decoded as JwtPayload;
 
-  const newHashedPassword = await bcrypt.hash(
-    payload.newPassword,
-    Number(config.salt__round)
+  // create an access token for the user
+  const jwtPayload = {
+    _id: _id,
+    role: role,
+    email: email,
+  };
+  const accessToken = createToken(
+    jwtPayload,
+    config.jwt__access__token as string,
+    config.jwt__access__expires__in as string
   );
-  const result = await User.findByIdAndUpdate(
-    _id,
-    {
-      password: newHashedPassword,
-    },
-    { new: true }
-  );
-
+  const result = {
+    accessToken,
+  };
   return result;
 };
 const forgetPasswordDb = async (
@@ -189,6 +184,7 @@ const resetPasswordDb = async (
 };
 
 export const AuthServices = {
+  createUserIntoDB,
   loginUser,
   changePasswordIntoDb,
   refreshTokenIntoDB,

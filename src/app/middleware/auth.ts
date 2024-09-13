@@ -5,9 +5,9 @@ import AppError from "../errors/AppError";
 import httpStatus from "http-status";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import config from "../config";
-import { User } from "../modules/user/user.model";
 import bcrypt from "bcrypt";
 import { TUserRole } from "../modules/auth/auth.interface";
+import { User } from "../modules/auth/auth.model";
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const token = req.headers.authorization;

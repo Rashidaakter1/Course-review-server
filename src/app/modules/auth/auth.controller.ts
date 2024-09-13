@@ -5,6 +5,15 @@ import { AuthServices } from "./auth.services";
 import { Request, Response } from "express";
 import config from "../../config";
 
+const createUser = catchAsync(async (req: Request, res: Response) => {
+  const result = await AuthServices.createUserIntoDB(req.body);
+  sendResponse(res, {
+    success: true,
+    statusCode: 201,
+    message: "User registered successfully",
+    data: result,
+  });
+});
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.loginUser(req.body);
   const { accessToken, refreshToken, user } = result;
@@ -24,16 +33,18 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   });
 });
 const refreshToken = catchAsync(async (req: Request, res: Response) => {
-  console.log(req.user);
-  const result = await AuthServices.changePasswordIntoDb(req.user, req.body);
+  const { refreshToken } = req.cookies;
+  console.log(req.cookies);
+  const result = await AuthServices.refreshTokenIntoDB(refreshToken);
 
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "User is logged in successfully!",
+    message: "Token refreshed successfully!",
     data: result,
   });
 });
+
 const changePassword = catchAsync(async (req: Request, res: Response) => {
   console.log(req.user);
   const result = await AuthServices.changePasswordIntoDb(req.user, req.body);
@@ -45,6 +56,7 @@ const changePassword = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 const forgetPassword = catchAsync(async (req: Request, res: Response) => {
   console.log(req.user);
   const result = await AuthServices.changePasswordIntoDb(req.user, req.body);
@@ -67,7 +79,9 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
+
 export const AuthControllers = {
+  createUser,
   loginUser,
   changePassword,
   refreshToken,
