@@ -28,7 +28,6 @@ const courseSchema = new Schema<TCourse>(
     isDeleted: { type: Boolean, default: false },
     createdBy: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "User",
     },
   },

@@ -27,7 +27,7 @@ const createCourseValidation = z.object({
         required_error: "Course title is required",
         invalid_type_error: "Title must be a string",
       })
-      .max(20, { message: "Title cannot exceed 20 characters" }),
+      .max(60, { message: "Title cannot exceed 60 characters" }),
     instructor: z.string({
       required_error: "Instructor is required",
       invalid_type_error: "Instructor must be a string",
@@ -54,7 +54,7 @@ const createCourseValidation = z.object({
       .optional(),
     details: detailsValidation,
     isDeleted: z.boolean().optional().default(false),
-    createdBy: z.string(),
+    createdBy: z.string().optional(),
   }),
 });
 

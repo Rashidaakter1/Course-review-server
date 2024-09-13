@@ -7,7 +7,7 @@ import { CourseServices } from "./course.service";
 import { Course } from "./course.model";
 
 const createCourse = catchAsync(async (req: Request, res: Response) => {
-  const result = await CourseServices.createCourseIntoDb(req.body);
+  const result = await CourseServices.createCourseIntoDb(req.user,req.body);
 
   sendResponse(res, {
     success: true,

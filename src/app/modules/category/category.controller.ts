@@ -5,7 +5,7 @@ import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
-  const result = await CategoryServices.createCategoryIntoDb(req.body);
+  const result = await CategoryServices.createCategoryIntoDb(req.user,req.body);
 
   sendResponse(res, {
     success: true,

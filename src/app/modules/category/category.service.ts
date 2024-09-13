@@ -1,14 +1,17 @@
+import { JwtPayload } from "jsonwebtoken";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { TCategory } from "./category.interface";
 import { Category } from "./category.model";
 
-const createCategoryIntoDb = async (payload: TCategory) => {
-  const category = await Category.create(payload);
+const createCategoryIntoDb = async (user: JwtPayload, payload: TCategory) => {
+  const category = await Category.create({ ...payload, createdBy: user._id });
   return category;
 };
 const getCategoryFromDb = async (query: Record<string, unknown>) => {
   const queryCategory = new QueryBuilder(
-    Category.find().select("-isDeleted"),
+    Category.find()
+      .select("-isDeleted")
+      .populate("createdBy", { _id: 1, username: 1, email: 1, role: 1 }),
     query
   )
     .search(["name"])
@@ -33,9 +36,7 @@ const updateCategoryFromDb = async (
   return category;
 };
 
-const deleteCategoryFromDb = async (
-  id: string,
-) => {
+const deleteCategoryFromDb = async (id: string) => {
   const category = await Category.findByIdAndUpdate(
     id,
     {

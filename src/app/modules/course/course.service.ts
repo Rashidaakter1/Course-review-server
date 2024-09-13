@@ -7,17 +7,20 @@ import { handleCalculatedDuration } from "./course.utli";
 import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
 import { Reviews } from "../review/review.model";
+import { JwtPayload } from "jsonwebtoken";
 
-const createCourseIntoDb = async (payload: TCourse) => {
+const createCourseIntoDb = async (user: JwtPayload, payload: TCourse) => {
   const { startDate, endDate } = payload;
   let calculatedDuration: number = handleCalculatedDuration(startDate, endDate);
   payload.durationInWeeks = calculatedDuration;
-  const course = await Course.create(payload);
+  const course = await Course.create({ ...payload, createdBy: user._id });
   return course;
 };
 const getCourseFromDb = async (query: Record<string, unknown>) => {
   const queryCourse = new QueryBuilder(
-    Course.find().select("-isDeleted"),
+    Course.find()
+      .select("-isDeleted")
+      .populate("createdBy", { _id: 1, username: 1, email: 1, role: 1 }),
     query
   )
     .search(searchableArray)
@@ -27,6 +30,7 @@ const getCourseFromDb = async (query: Record<string, unknown>) => {
     .fields();
 
   const filteredCourse = await queryCourse.modelQuery;
+  console.log(filteredCourse);
   return filteredCourse;
 };
 const getSingleCourseFromDb = async (id: string) => {

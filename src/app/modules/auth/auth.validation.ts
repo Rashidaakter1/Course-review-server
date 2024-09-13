@@ -32,10 +32,12 @@ const createUserValidation = z.object({
 });
 const loginValidationSchema = z.object({
   body: z.object({
-    username: z.string({
-      required_error: "UserName is required",
-      invalid_type_error: "UserName must be a string",
-    }),
+    username: z
+      .string({
+        required_error: "UserName is required",
+        invalid_type_error: "UserName must be a string",
+      })
+      .trim(),
 
     password: z
       .string()

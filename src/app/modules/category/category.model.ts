@@ -10,7 +10,6 @@ const categorySchema = new Schema<TCategory>({
   isDeleted: { type: Boolean, default: false },
   createdBy: {
     type: Schema.Types.ObjectId,
-    required: true,
     ref: "User",
   },
 });
