@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import catchAsync from "../../utlils/catchAsync";
-import sendRequest from "../../utlils/sendRequest";
+import catchAsync from "../../utils/catchAsync";
+import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { ReviewsServices } from "./review.service";
 
 const createReviews = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewsServices.createReviewsIntoDb(req.body);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: 201,
     message: "Reviews created successfully!",
@@ -18,7 +18,7 @@ const createReviews = catchAsync(async (req: Request, res: Response) => {
 const getReviews = catchAsync(async (req: Request, res: Response) => {
   const result = await ReviewsServices.getReviewsFromDb(req.query);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Reviews are retrieved successfully",
@@ -33,7 +33,7 @@ const getSingleReviews = catchAsync(async (req: Request, res: Response) => {
     req.body
   );
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Review  is retrieved  successfully!",
@@ -45,7 +45,7 @@ const updateSingleReviews = catchAsync(async (req: Request, res: Response) => {
   console.log(req.body);
   const result = await ReviewsServices.updateReviewsFromDb(reviewId, req.body);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Review  is updated  successfully!",
@@ -56,7 +56,7 @@ const deleteSingleReviews = catchAsync(async (req: Request, res: Response) => {
   const reviewId = req.params.reviewId;
   const result = await ReviewsServices.deleteReviewsFromDb(reviewId);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Review  is deleted  successfully!",

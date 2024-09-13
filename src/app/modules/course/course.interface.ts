@@ -23,4 +23,5 @@ export type TCourse = {
   durationInWeeks: number;
   details: TDetails;
   isDeleted?: boolean;
+  createdBy: Types.ObjectId;
 };

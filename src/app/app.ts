@@ -3,7 +3,7 @@ import cors from "cors";
 import router from "./routes";
 import notFound from "./middleware/notFound";
 import globalErrorHandler from "./middleware/globalErrorHandler";
-import sendRequest from "./utlils/sendRequest";
+import sendRequest from "./utils/sendResponse";
 import httpStatus from "http-status";
 const app = express();
 

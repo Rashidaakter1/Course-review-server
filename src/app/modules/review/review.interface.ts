@@ -5,4 +5,5 @@ export type TReviews = {
   rating: number;
   review: string;
   isDeleted: boolean;
+  createdBy: Types.ObjectId;
 };

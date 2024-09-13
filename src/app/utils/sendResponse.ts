@@ -12,7 +12,7 @@ type TGenericResponse<T> = {
   data: T;
 };
 
-const sendRequest = <T>(res: Response, result: TGenericResponse<T>) => {
+const sendResponse = <T>(res: Response, result: TGenericResponse<T>) => {
   res.status(result.statusCode).json({
     success: result.success,
     statusCode: result.statusCode,
@@ -22,4 +22,4 @@ const sendRequest = <T>(res: Response, result: TGenericResponse<T>) => {
   });
 };
 
-export default sendRequest;
+export default sendResponse;

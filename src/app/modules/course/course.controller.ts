@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import catchAsync from "../../utlils/catchAsync";
+import catchAsync from "../../utils/catchAsync";
 
-import sendRequest from "../../utlils/sendRequest";
+import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 import { CourseServices } from "./course.service";
 import { Course } from "./course.model";
@@ -9,7 +9,7 @@ import { Course } from "./course.model";
 const createCourse = catchAsync(async (req: Request, res: Response) => {
   const result = await CourseServices.createCourseIntoDb(req.body);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: 201,
     message: "Course created successfully!",
@@ -30,7 +30,7 @@ const getCourse = catchAsync(async (req: Request, res: Response) => {
   };
   const result = await CourseServices.getCourseFromDb(query);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Courses retrieved successfully",
@@ -43,7 +43,7 @@ const getSingleCourse = catchAsync(async (req: Request, res: Response) => {
   const courseId = req.params.courseId;
   const result = await CourseServices.getSingleCourseFromDb(courseId);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Course is retrieved successfully!",
@@ -55,7 +55,7 @@ const updateSingleCourse = catchAsync(async (req: Request, res: Response) => {
   const courseId = req.params.courseId;
   const result = await CourseServices.updateCourseFromDb(courseId, req.body);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Course is updated successfully!",
@@ -67,7 +67,7 @@ const deleteSingleCourse = catchAsync(async (req: Request, res: Response) => {
   const courseId = req.params.courseId;
   const result = await CourseServices.deleteCourseFromDb(courseId);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Course is deleted successfully!",
@@ -80,7 +80,7 @@ const getAllReviewsWithCourse = catchAsync(
     const courseId = req.params.courseId;
     const result = await CourseServices.getAllReviewsWithCourseFromDb(courseId);
 
-    sendRequest(res, {
+    sendResponse(res, {
       success: true,
       statusCode: httpStatus.OK,
       message: "Course and Reviews retrieved successfully!",
@@ -91,7 +91,7 @@ const getAllReviewsWithCourse = catchAsync(
 const getBestCourse = catchAsync(async (req: Request, res: Response) => {
   const result = await CourseServices.getBestReviewsWithCourseFromDb();
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Best course retrieved successfully!",

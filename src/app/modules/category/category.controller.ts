@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import catchAsync from "../../utlils/catchAsync";
+import catchAsync from "../../utils/catchAsync";
 import { CategoryServices } from "./category.service";
-import sendRequest from "../../utlils/sendRequest";
+import sendResponse from "../../utils/sendResponse";
 import httpStatus from "http-status";
 
 const createCategory = catchAsync(async (req: Request, res: Response) => {
   const result = await CategoryServices.createCategoryIntoDb(req.body);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: 201,
     message: "Category created successfully!",
@@ -18,7 +18,7 @@ const createCategory = catchAsync(async (req: Request, res: Response) => {
 const getCategory = catchAsync(async (req: Request, res: Response) => {
   const result = await CategoryServices.getCategoryFromDb(req.query);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Categories retrieved successfully",
@@ -30,7 +30,7 @@ const getSingleCategory = catchAsync(async (req: Request, res: Response) => {
   const categoryId = req.params.categoryId;
   const result = await CategoryServices.getSingleCategoryFromDb(categoryId);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Category is retrieved successfully!",
@@ -45,7 +45,7 @@ const updateSingleCategory = catchAsync(async (req: Request, res: Response) => {
     req.body
   );
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Category is updated successfully!",
@@ -57,7 +57,7 @@ const deleteSingleCategory = catchAsync(async (req: Request, res: Response) => {
   const categoryId = req.params.categoryId;
   const result = await CategoryServices.deleteCategoryFromDb(categoryId);
 
-  sendRequest(res, {
+  sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
     message: "Category is deleted successfully!",

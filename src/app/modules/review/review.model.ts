@@ -10,6 +10,11 @@ const ReviewsSchema = new Schema<TReviews>(
     rating: { type: Number, required: true },
     review: { type: String, required: true },
     isDeleted: { type: Boolean, default: false },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "User",
+    },
   },
   {
     timestamps: true,

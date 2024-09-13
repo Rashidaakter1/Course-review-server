@@ -54,6 +54,7 @@ const createCourseValidation = z.object({
       .optional(),
     details: detailsValidation,
     isDeleted: z.boolean().optional().default(false),
+    createdBy: z.string(),
   }),
 });
 
