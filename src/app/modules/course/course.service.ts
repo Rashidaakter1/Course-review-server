@@ -52,7 +52,7 @@ const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
     );
 
     if (!updatedBasicCourse) {
-      throw new AppError("Failed to Update Course", httpStatus.BAD_REQUEST);
+      throw new AppError(httpStatus.BAD_REQUEST, "Failed to Update Course");
     }
 
     // 2. Update `details` object fields
@@ -74,8 +74,8 @@ const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
 
       if (!detailsModifiedCourse) {
         throw new AppError(
-          "Failed to Update Course Details",
-          httpStatus.BAD_REQUEST
+          httpStatus.BAD_REQUEST,
+          "Failed to Update Course Details"
         );
       }
     }
@@ -100,7 +100,7 @@ const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
         );
 
         if (!deletedTagsCourse) {
-          throw new AppError("Failed to Remove Tags", httpStatus.BAD_REQUEST);
+          throw new AppError(httpStatus.BAD_REQUEST, "Failed to Remove Tags");
         }
       }
 
@@ -118,7 +118,7 @@ const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
         );
 
         if (!notDeletedTagsCourse) {
-          throw new AppError("Failed to Add Tags", httpStatus.BAD_REQUEST);
+          throw new AppError(httpStatus.BAD_REQUEST, "Failed to Add Tags");
         }
       }
     }
@@ -132,12 +132,11 @@ const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
     await session.abortTransaction();
     await session.endSession();
     console.error("Error updating course:", error); // Log original error
-    throw new AppError("Failed to Update Course", httpStatus.BAD_REQUEST);
+    throw new AppError(httpStatus.BAD_REQUEST, "Failed to Update Course");
   }
 };
 
 const deleteCourseFromDb = async (id: string) => {
-
   const course = await Course.findByIdAndUpdate(
     id,
     {
@@ -147,7 +146,6 @@ const deleteCourseFromDb = async (id: string) => {
   );
 
   console.log(course, "course deleted");
-
 };
 
 const getAllReviewsWithCourseFromDb = async (id: string) => {
@@ -155,7 +153,7 @@ const getAllReviewsWithCourseFromDb = async (id: string) => {
   const course = await Course.findById(id).where({ isDeleted: { $ne: true } });
   console.log(course);
   if (!course) {
-    throw new AppError("Course not found", httpStatus.NOT_FOUND);
+    throw new AppError(httpStatus.NOT_FOUND, "Course not found");
   }
 
   // Fetch all reviews related to the course

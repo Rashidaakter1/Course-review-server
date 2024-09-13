@@ -11,12 +11,14 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
   const result = await UserServices.createUserIntoDB(req.body);
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.OK,
-    message: "User created successfully",
+    statusCode: 201,
+    message: "User registered successfully",
     data: result,
   });
 });
 
+
 export const UserControllers = {
   createUser,
+ 
 };
