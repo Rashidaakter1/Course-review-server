@@ -14,9 +14,12 @@ const createUserIntoDB = async (payload: TUser) => {
 };
 const loginUser = async (payload: TLoginUser) => {
   //check if the user is already in the database
-  const isUserExist = await User.findOne({ username: payload?.username });
+  const isUserExist = await User.findOne({
+    username: payload?.username,
+  }).select("+password");
+
   if (!isUserExist) {
-    throw new AppError(httpStatus.NOT_FOUND, "User not found");
+    throw new AppError(httpStatus.NOT_FOUND, "User is not found");
   }
   // if the user is not isDeleted :true then
   if (isUserExist.isDeleted === true) {
@@ -30,6 +33,7 @@ const loginUser = async (payload: TLoginUser) => {
   if (!isPasswordMatched) {
     throw new AppError(httpStatus.NOT_FOUND, "Users Password do not found");
   }
+
   // create an access token for the user
   const jwtPayload = {
     _id: isUserExist?._id,
@@ -59,6 +63,7 @@ const loginUser = async (payload: TLoginUser) => {
     accessToken,
     refreshToken,
   };
+
   return result;
 };
 const changePasswordIntoDb = async (
@@ -70,7 +75,7 @@ const changePasswordIntoDb = async (
 ) => {
   const { _id } = user;
 
-  const isUser = await User.findById(_id);
+  const isUser = await User.findById(_id).select("+password");
   const hashedPassword = isUser?.password as string;
   const isPasswordMatched = await bcrypt.compare(
     payload?.currentPassword,
@@ -97,7 +102,7 @@ const changePasswordIntoDb = async (
 const refreshTokenIntoDB = async (token: string) => {
   const decoded = jwt.verify(token, config.jwt__refresh__token as string);
 
-  console.log(decoded ,"refresh");
+  console.log(decoded, "refresh");
   const { _id, role, email } = decoded as JwtPayload;
 
   // create an access token for the user

@@ -16,6 +16,7 @@ const createUser = catchAsync(async (req: Request, res: Response) => {
 });
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const result = await AuthServices.loginUser(req.body);
+  console.log(result, "controller")
   const { accessToken, refreshToken, user } = result;
 
   res.cookie("refreshToken", refreshToken, {

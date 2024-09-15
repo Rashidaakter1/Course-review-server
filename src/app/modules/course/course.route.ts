@@ -19,7 +19,11 @@ router.get(
   CourseControllers.getCourse
 );
 router.get("/:courseId", CourseControllers.getSingleCourse);
-router.put("/:courseId", CourseControllers.updateSingleCourse);
+router.put(
+  "/:courseId",
+  auth(USER_ROLE.admin),
+  CourseControllers.updateSingleCourse
+);
 router.delete("/:courseId", CourseControllers.deleteSingleCourse);
 router.get("/:courseId/reviews", CourseControllers.getAllReviewsWithCourse);
 

@@ -30,6 +30,7 @@ const createReviewsValidation = z.object({
       .min(1, { message: "rating must  be above 1" }),
     review: z.string({ required_error: "Review name is required" }),
     isDeleted: z.boolean().optional().default(false),
+    createdBy: z.string().optional(),
   }),
 });
 
@@ -46,6 +47,7 @@ const updateReviewsValidation = z.object({
       .optional(),
     review: z.string({ required_error: "Review name is required" }).optional(),
     isDeleted: z.boolean().optional().default(false),
+    createdBy: z.string().optional(),
   }),
 });
 

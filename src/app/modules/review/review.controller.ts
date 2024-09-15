@@ -5,7 +5,7 @@ import httpStatus from "http-status";
 import { ReviewsServices } from "./review.service";
 
 const createReviews = catchAsync(async (req: Request, res: Response) => {
-  const result = await ReviewsServices.createReviewsIntoDb(req.body);
+  const result = await ReviewsServices.createReviewsIntoDb(req.user, req.body);
 
   sendResponse(res, {
     success: true,

@@ -1,15 +1,18 @@
+import { JwtPayload } from "jsonwebtoken";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { searchableReviewArray } from "./review.constant";
 import { TReviews } from "./review.interface";
 import { Reviews } from "./review.model";
 
-const createReviewsIntoDb = async (payload: TReviews) => {
-  const reviews = await Reviews.create(payload);
+const createReviewsIntoDb = async (user: JwtPayload, payload: TReviews) => {
+  const reviews = await Reviews.create({ ...payload, createdBy: user._id });
   return reviews;
 };
 const getReviewsFromDb = async (query: Record<string, unknown>) => {
   const queryReview = new QueryBuilder(
-    Reviews.find().select("-isDeleted"),
+    Reviews.find()
+      .select("-isDeleted")
+      .populate("createdBy", { _id: 1, username: 1, email: 1, role: 1 }),
     query
   )
     .search(searchableReviewArray)

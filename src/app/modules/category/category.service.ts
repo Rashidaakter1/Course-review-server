@@ -2,6 +2,8 @@ import { JwtPayload } from "jsonwebtoken";
 import QueryBuilder from "../../builder/QueryBuilder";
 import { TCategory } from "./category.interface";
 import { Category } from "./category.model";
+import AppError from "../../errors/AppError";
+import httpStatus from "http-status";
 
 const createCategoryIntoDb = async (user: JwtPayload, payload: TCategory) => {
   const category = await Category.create({ ...payload, createdBy: user._id });
@@ -23,20 +25,34 @@ const getCategoryFromDb = async (query: Record<string, unknown>) => {
   return result;
 };
 const getSingleCategoryFromDb = async (id: string) => {
-  const category = await Category.findById(id).where({
-    isDeleted: { $ne: true },
-  });
+  const isCategoryExists = await Category.findById(id);
+  if (!isCategoryExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Category is  not found");
+  }
+  const category = await Category.findById(id)
+    .where({
+      isDeleted: { $ne: true },
+    })
+    .populate("createdBy", { _id: 1, username: 1, email: 1, role: 1 });
   return category;
 };
 const updateCategoryFromDb = async (
   id: string,
   payload: Partial<TCategory>
 ) => {
+  const isCategoryExists = await Category.findById(id);
+  if (!isCategoryExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Category is  not found");
+  }
   const category = await Category.findByIdAndUpdate(id, payload, { new: true });
   return category;
 };
 
 const deleteCategoryFromDb = async (id: string) => {
+  const isCategoryExists = await Category.findById(id);
+  if (!isCategoryExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Category is  not found");
+  }
   const category = await Category.findByIdAndUpdate(
     id,
     {

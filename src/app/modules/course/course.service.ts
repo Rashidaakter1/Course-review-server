@@ -8,8 +8,14 @@ import AppError from "../../errors/AppError";
 import httpStatus from "http-status";
 import { Reviews } from "../review/review.model";
 import { JwtPayload } from "jsonwebtoken";
+import { Category } from "../category/category.model";
 
 const createCourseIntoDb = async (user: JwtPayload, payload: TCourse) => {
+  //check the category is exists
+  const isCategoryExists = await Category.findById(payload.categoryId);
+  if (!isCategoryExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Category not found");
+  }
   const { startDate, endDate } = payload;
   let calculatedDuration: number = handleCalculatedDuration(startDate, endDate);
   payload.durationInWeeks = calculatedDuration;
@@ -37,7 +43,11 @@ const getSingleCourseFromDb = async (id: string) => {
   const course = await Course.findById(id).where({ isDeleted: { $ne: true } });
   return course;
 };
-const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
+const updateCourseFromDb = async (
+  user: JwtPayload,
+  id: string,
+  payload: Partial<TCourse>
+) => {
   const { details, tags, ...remainingData } = payload;
   const session = await mongoose.startSession();
 
@@ -47,7 +57,7 @@ const updateCourseFromDb = async (id: string, payload: Partial<TCourse>) => {
     // 1. Basic fields will be Updated
     const updatedBasicCourse = await Course.findByIdAndUpdate(
       id,
-      remainingData,
+      { ...remainingData, createdBy: user._id },
       {
         new: true,
         runValidators: true,
@@ -154,14 +164,19 @@ const deleteCourseFromDb = async (id: string) => {
 
 const getAllReviewsWithCourseFromDb = async (id: string) => {
   // Fetch the course details
-  const course = await Course.findById(id).where({ isDeleted: { $ne: true } });
+  const course = await Course.findById(id)
+    .where({ isDeleted: { $ne: true } })
+    .populate("createdBy", { _id: 1, username: 1, email: 1, role: 1 });
   console.log(course);
   if (!course) {
     throw new AppError(httpStatus.NOT_FOUND, "Course not found");
   }
 
   // Fetch all reviews related to the course
-  const allReviewsWithSameId = await Reviews.find({ courseId: id });
+  const allReviewsWithSameId = await Reviews.find({ courseId: id }).populate(
+    "createdBy",
+    { _id: 1, username: 1, email: 1, role: 1 }
+  );
 
   // Prepare the response data
   const allReviewWithCourse = {
@@ -187,12 +202,15 @@ const getBestReviewsWithCourseFromDb = async () => {
       $sort: { averageRating: -1 },
     },
     {
-      // Limit to top 10 best reviewed courses (or change the limit as needed)
+      // Limit to top 1 best reviewed courses (or change the limit as needed)
       $limit: 1,
     },
   ]);
 
-  const courseData = await Course.findById(bestReviewedCourse[0]._id);
+  const courseData = await Course.findById(bestReviewedCourse[0]._id).populate(
+    "createdBy",
+    { _id: 1, username: 1, email: 1, role: 1 }
+  );
 
   const data = {
     course: courseData,

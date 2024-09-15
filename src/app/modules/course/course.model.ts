@@ -25,7 +25,7 @@ const courseSchema = new Schema<TCourse>(
     provider: { type: String, required: true },
     durationInWeeks: { type: Number },
     details: detailsSchema,
-    isDeleted: { type: Boolean, default: false },
+    isDeleted: { type: Boolean, default: false, select: 0 },
     createdBy: {
       type: Schema.Types.ObjectId,
       ref: "User",

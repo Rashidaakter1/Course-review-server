@@ -12,7 +12,6 @@ const ReviewsSchema = new Schema<TReviews>(
     isDeleted: { type: Boolean, default: false },
     createdBy: {
       type: Schema.Types.ObjectId,
-      required: true,
       ref: "User",
     },
   },

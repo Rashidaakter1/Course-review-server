@@ -19,6 +19,7 @@ const userSchema = new Schema<TUser>(
       type: String,
       required: true,
       unique: true,
+      select: 0,
     },
     role: {
       type: String,
@@ -29,6 +30,7 @@ const userSchema = new Schema<TUser>(
     isDeleted: {
       type: Boolean,
       default: false,
+      select: 0,
     },
   },
   {
@@ -38,6 +40,15 @@ const userSchema = new Schema<TUser>(
 
 userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, Number(config.salt__round));
+  next();
+});
+
+userSchema.pre("find", function (next) {
+  this.where({ isDeleted: { $ne: true } });
+  next();
+});
+userSchema.pre("findOne", function (next) {
+  this.where({ isDeleted: { $ne: true } });
   next();
 });
 export const User = mongoose.model<TUser>("User", userSchema);
