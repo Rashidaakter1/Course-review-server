@@ -124,9 +124,21 @@ const changePasswordIntoDb = async (
       const isMatch = await bcrypt.compare(newPassword, oldPassword.password);
 
       if (isMatch) {
+        const lastUsedDate = new Date(oldPassword.createdAt).toLocaleString(
+          "en-US",
+          {
+            year: "numeric",
+            month: "numeric",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            hour12: true, // AM/PM format
+          }
+        );
+
         throw new AppError(
           httpStatus.BAD_REQUEST,
-          "New password cannot be the same as the last 2 or current passwords."
+          `Password change failed. Ensure the new password is unique and not among the last 2 used (last used on ${lastUsedDate}).`
         );
       }
     }
