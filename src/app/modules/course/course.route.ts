@@ -18,13 +18,25 @@ router.get(
   auth(USER_ROLE.admin, USER_ROLE.user),
   CourseControllers.getCourse
 );
-router.get("/:courseId", CourseControllers.getSingleCourse);
+router.get(
+  "/:courseId",
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  CourseControllers.getSingleCourse
+);
 router.put(
   "/:courseId",
   auth(USER_ROLE.admin),
   CourseControllers.updateSingleCourse
 );
-router.delete("/:courseId", CourseControllers.deleteSingleCourse);
-router.get("/:courseId/reviews", CourseControllers.getAllReviewsWithCourse);
+router.delete(
+  "/:courseId",
+  auth(USER_ROLE.admin),
+  CourseControllers.deleteSingleCourse
+);
+router.get(
+  "/:courseId/reviews",
+  auth(USER_ROLE.admin, USER_ROLE.user),
+  CourseControllers.getAllReviewsWithCourse
+);
 
 export const CourseRoutes = router;

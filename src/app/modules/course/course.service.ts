@@ -16,6 +16,9 @@ const createCourseIntoDb = async (user: JwtPayload, payload: TCourse) => {
   if (!isCategoryExists) {
     throw new AppError(httpStatus.BAD_REQUEST, "Category not found");
   }
+  if (isCategoryExists.isDeleted === true) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Category not found");
+  }
   const { startDate, endDate } = payload;
   let calculatedDuration: number = handleCalculatedDuration(startDate, endDate);
   payload.durationInWeeks = calculatedDuration;
@@ -40,7 +43,13 @@ const getCourseFromDb = async (query: Record<string, unknown>) => {
   return filteredCourse;
 };
 const getSingleCourseFromDb = async (id: string) => {
-  const course = await Course.findById(id).where({ isDeleted: { $ne: true } });
+  const isCourseExists = await Course.findById(id);
+  if (!isCourseExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Course is  not found");
+  }
+  const course = await Course.findById(id)
+    .where({ isDeleted: { $ne: true } })
+    .populate("createdBy", { _id: 1, username: 1, email: 1, role: 1 });
   return course;
 };
 const updateCourseFromDb = async (
@@ -48,6 +57,20 @@ const updateCourseFromDb = async (
   id: string,
   payload: Partial<TCourse>
 ) => {
+  const isCourseExists = await Course.findById(id);
+  if (!isCourseExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Course is  not found");
+  }
+
+  // check the category exists and isDeleted true
+  const isCategoryExists = await Category.findById(isCourseExists.categoryId);
+  if (!isCategoryExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Category is  not found");
+  }
+  if (isCategoryExists?.isDeleted === true) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Category is  not found");
+  }
+
   const { details, tags, ...remainingData } = payload;
   const session = await mongoose.startSession();
 
@@ -151,6 +174,10 @@ const updateCourseFromDb = async (
 };
 
 const deleteCourseFromDb = async (id: string) => {
+  const isCourseExists = await Course.findById(id);
+  if (!isCourseExists) {
+    throw new AppError(httpStatus.BAD_REQUEST, "Course is  not found");
+  }
   const course = await Course.findByIdAndUpdate(
     id,
     {
