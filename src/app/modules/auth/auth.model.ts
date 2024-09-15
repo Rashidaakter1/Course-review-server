@@ -2,7 +2,19 @@ import mongoose, { Schema } from "mongoose";
 
 import config from "../../config";
 import bcrypt from "bcrypt";
-import { TUser } from "./auth.interface";
+import { TPasswordHistory, TUser } from "./auth.interface";
+
+const passwordHistorySchema = new Schema<TPasswordHistory>(
+  {
+    password: {
+      type: String,
+    },
+    createdAt: {
+      type: Date,
+    },
+  },
+  { _id: false }
+);
 const userSchema = new Schema<TUser>(
   {
     username: {
@@ -21,6 +33,7 @@ const userSchema = new Schema<TUser>(
       unique: true,
       select: 0,
     },
+    passwordHistory: [passwordHistorySchema],
     role: {
       type: String,
       enum: ["user", "admin"],
@@ -38,10 +51,6 @@ const userSchema = new Schema<TUser>(
   }
 );
 
-userSchema.pre("save", async function (next) {
-  this.password = await bcrypt.hash(this.password, Number(config.salt__round));
-  next();
-});
 
 userSchema.pre("find", function (next) {
   this.where({ isDeleted: { $ne: true } });

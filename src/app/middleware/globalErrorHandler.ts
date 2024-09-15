@@ -8,7 +8,7 @@ import handleDuplicateError from "../errors/handleDuplicateError";
 import AppError from "../errors/AppError";
 
 const globalErrorHandler: ErrorRequestHandler = async (err, req, res, next) => {
-  let message = err.message || "Something went wrong !";
+  let message = err.message || "Unauthorized Access";
   let errorMessage = err.message || "Something went wrong !";
   let errorDetails;
   if (err instanceof ZodError) {

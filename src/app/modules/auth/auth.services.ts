@@ -1,7 +1,7 @@
 import httpStatus from "http-status";
 import config from "../../config";
 import AppError from "../../errors/AppError";
-import { TLoginUser, TUser } from "./auth.interface";
+import { TLoginUser, TPasswordHistory, TUser } from "./auth.interface";
 import bcrypt from "bcrypt";
 import createToken from "./auth.utils";
 import { JwtPayload } from "jsonwebtoken";
@@ -9,9 +9,25 @@ import jwt from "jsonwebtoken";
 import { User } from "./auth.model";
 
 const createUserIntoDB = async (payload: TUser) => {
-  const result = await User.create(payload);
+  const { password } = payload;
+  const hashedPassword = await bcrypt.hash(
+    password,
+    Number(config.salt__round)
+  );
+
+  const result = await User.create({
+    ...payload,
+    password: hashedPassword,
+    passwordHistory: [
+      {
+        password: hashedPassword,
+        createdAt: new Date(),
+      },
+    ],
+  });
   return result;
 };
+
 const loginUser = async (payload: TLoginUser) => {
   //check if the user is already in the database
   const isUserExist = await User.findOne({
@@ -84,15 +100,50 @@ const changePasswordIntoDb = async (
   if (!isPasswordMatched) {
     throw new AppError(httpStatus.NOT_FOUND, "Users Password do not found");
   }
+  if (payload.newPassword === payload.currentPassword) {
+    throw new AppError(
+      httpStatus.BAD_REQUEST,
+      "Current password and new password is same"
+    );
+  }
 
   const newHashedPassword = await bcrypt.hash(
     payload.newPassword,
     Number(config.salt__round)
   );
+
+  const twoPasswordsHistory = isUser?.passwordHistory.slice(-2);
+  console.log(twoPasswordsHistory);
+
+  // check if the passwords are already in password History
+  const comparePasswords = async (
+    newPassword: string,
+    twoPasswordsHistory: any
+  ) => {
+    for (const oldPassword of twoPasswordsHistory) {
+      const isMatch = await bcrypt.compare(newPassword, oldPassword.password);
+
+      if (isMatch) {
+        throw new AppError(
+          httpStatus.BAD_REQUEST,
+          "New password cannot be the same as the last 2 or current passwords."
+        );
+      }
+    }
+  };
+  await comparePasswords(payload.newPassword, twoPasswordsHistory);
+
+  const anotherPassword = {
+    password: newHashedPassword,
+    createdAt: new Date(),
+  };
+  isUser?.passwordHistory.push(anotherPassword);
+
   const result = await User.findByIdAndUpdate(
     _id,
     {
       password: newHashedPassword,
+      passwordHistory: isUser?.passwordHistory,
     },
     { new: true }
   );
