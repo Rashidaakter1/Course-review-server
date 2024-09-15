@@ -28,10 +28,7 @@ const getReviews = catchAsync(async (req: Request, res: Response) => {
 
 const getSingleReviews = catchAsync(async (req: Request, res: Response) => {
   const reviewId = req.params.reviewId;
-  const result = await ReviewsServices.getSingleReviewsFromDb(
-    reviewId,
-    req.body
-  );
+  const result = await ReviewsServices.getSingleReviewsFromDb(reviewId);
 
   sendResponse(res, {
     success: true,
@@ -43,7 +40,11 @@ const getSingleReviews = catchAsync(async (req: Request, res: Response) => {
 const updateSingleReviews = catchAsync(async (req: Request, res: Response) => {
   const reviewId = req.params.reviewId;
   console.log(req.body);
-  const result = await ReviewsServices.updateReviewsFromDb(reviewId, req.body);
+  const result = await ReviewsServices.updateReviewsFromDb(
+    req.user,
+    reviewId,
+    req.body
+  );
 
   sendResponse(res, {
     success: true,
@@ -54,7 +55,7 @@ const updateSingleReviews = catchAsync(async (req: Request, res: Response) => {
 });
 const deleteSingleReviews = catchAsync(async (req: Request, res: Response) => {
   const reviewId = req.params.reviewId;
-  const result = await ReviewsServices.deleteReviewsFromDb(reviewId);
+  const result = await ReviewsServices.deleteReviewsFromDb(req.user, reviewId);
 
   sendResponse(res, {
     success: true,

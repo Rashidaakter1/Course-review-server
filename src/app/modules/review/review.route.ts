@@ -13,13 +13,26 @@ router.post(
   validateRequest(ReviewsValidations.createReviewsValidation),
   ReviewsControllers.createReviews
 );
-router.get("/", ReviewsControllers.getReviews);
-router.get("/:reviewId", ReviewsControllers.getSingleReviews);
+router.get(
+  "/",
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  ReviewsControllers.getReviews
+);
+router.get(
+  "/:reviewId",
+  auth(USER_ROLE.user, USER_ROLE.admin),
+  ReviewsControllers.getSingleReviews
+);
 router.put(
   "/:reviewId",
+  auth(USER_ROLE.user),
   validateRequest(ReviewsValidations.updateReviewsValidation),
   ReviewsControllers.updateSingleReviews
 );
-router.delete("/:reviewId", ReviewsControllers.deleteSingleReviews);
+router.delete(
+  "/:reviewId",
+  auth(USER_ROLE.user),
+  ReviewsControllers.deleteSingleReviews
+);
 
 export const ReviewsRoutes = router;
